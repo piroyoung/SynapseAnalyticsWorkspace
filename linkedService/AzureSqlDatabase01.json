@@ -1,0 +1,14 @@
+{
+	"name": "AzureSqlDatabase01",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=example-sqlsrv-01.database.windows.net;Initial Catalog=example-sqldb-01"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
