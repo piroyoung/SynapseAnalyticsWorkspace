@@ -1,0 +1,122 @@
+{
+	"name": "createMartPurchases",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "purchases",
+						"type": "DatasetReference"
+					},
+					"name": "purchases"
+				},
+				{
+					"dataset": {
+						"referenceName": "items",
+						"type": "DatasetReference"
+					},
+					"name": "items"
+				},
+				{
+					"dataset": {
+						"referenceName": "users",
+						"type": "DatasetReference"
+					},
+					"name": "users"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "mart_purchases",
+						"type": "DatasetReference"
+					},
+					"name": "sinkToMart"
+				}
+			],
+			"transformations": [
+				{
+					"name": "joinWithItems"
+				},
+				{
+					"name": "purchasesWithItems"
+				},
+				{
+					"name": "purchasesWithItemsUsers"
+				},
+				{
+					"name": "purchaseTransactions"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as long,",
+				"          user_id as long,",
+				"          item_id as long,",
+				"          quantity as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> purchases",
+				"source(output(",
+				"          id as long,",
+				"          name as string,",
+				"          price as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> items",
+				"source(output(",
+				"          id as long,",
+				"          name as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> users",
+				"purchases, items join(item_id == items@id,",
+				"     joinType:'left',",
+				"     broadcast: 'auto')~> joinWithItems",
+				"joinWithItems select(mapColumn(",
+				"          id = purchases@id,",
+				"          user_id,",
+				"          item_id,",
+				"          quantity,",
+				"          item_name = name,",
+				"          item_price = price",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> purchasesWithItems",
+				"purchasesWithItems, users join(user_id == users@id,",
+				"     joinType:'left',",
+				"     broadcast: 'auto')~> purchasesWithItemsUsers",
+				"purchasesWithItemsUsers select(mapColumn(",
+				"          id = purchasesWithItems@id,",
+				"          user_id,",
+				"          item_id,",
+				"          quantity,",
+				"          item_name,",
+				"          item_price,",
+				"          user_name = name",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> purchaseTransactions",
+				"purchaseTransactions sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkToMart"
+			]
+		}
+	}
+}

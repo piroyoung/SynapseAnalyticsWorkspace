@@ -1,0 +1,17 @@
+{
+	"name": "createTable",
+	"properties": {
+		"content": {
+			"query": "SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE TABLE [mart].[purchases]\n( \n\t[id] [bigint]  NULL,\n\t[user_id] [bigint]  NULL,\n\t[item_id] [bigint]  NULL,\n\t[quantity] [bigint]  NULL,\n\t[item_name] [nvarchar](max)  NULL,\n\t[item_price] [bigint]  NULL,\n\t[user_name] [nvarchar](max)  NULL\n)\nWITH\n(\n\tDISTRIBUTION = ROUND_ROBIN,\n\tHEAP\n)\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "pool01",
+				"poolName": "pool01"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

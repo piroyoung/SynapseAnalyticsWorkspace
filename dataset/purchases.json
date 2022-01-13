@@ -1,0 +1,41 @@
+{
+	"name": "purchases",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "demo-synapse-01-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "datalake"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "parquet/purchases.parquet",
+				"fileSystem": "demo-fs-01"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "id",
+				"type": "INT64"
+			},
+			{
+				"name": "user_id",
+				"type": "INT64"
+			},
+			{
+				"name": "item_id",
+				"type": "INT64"
+			},
+			{
+				"name": "quantity",
+				"type": "INT64"
+			}
+		]
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

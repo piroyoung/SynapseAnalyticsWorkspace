@@ -1,0 +1,25 @@
+{
+	"name": "backup_items",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "demo-synapse-01-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "backup"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "items.parquet",
+				"folderPath": "backup",
+				"fileSystem": "demo-fs-01"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

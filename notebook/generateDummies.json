@@ -1,0 +1,307 @@
+{
+	"name": "generateDummies",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "spark01",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "56g",
+			"driverCores": 8,
+			"executorMemory": "56g",
+			"executorCores": 8,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "5561cb21-0570-46d6-8942-6cbabbe23bdb"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/365f5646-ed6e-4fe4-ae1f-89e1fcb204ad/resourceGroups/synapse-demo/providers/Microsoft.Synapse/workspaces/demo-synapse-01/bigDataPools/spark01",
+				"name": "spark01",
+				"type": "Spark",
+				"endpoint": "https://demo-synapse-01.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark01",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.1",
+				"nodeCount": 10,
+				"cores": 8,
+				"memory": 56,
+				"extraHeader": null
+			}
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"import pandas as pd\r\n",
+					"import numpy as np\r\n",
+					"import pyspark as ps"
+				],
+				"attachments": null,
+				"execution_count": 42
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Enable Arrow-based columnar data transfers\r\n",
+					"spark.conf.set(\"spark.sql.execution.arrow.enabled\", \"true\")"
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"items: pd.DataFrame = pd.DataFrame(\r\n",
+					"    {\r\n",
+					"        \"id\": [1, 2, 3],\r\n",
+					"        \"name\": [\"apple\", \"orange\", \"banana\"],\r\n",
+					"        \"price\": [100, 120, 80]\r\n",
+					"    }\r\n",
+					")"
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"items"
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"users: pd.DataFrame = pd.DataFrame(\r\n",
+					"    {\r\n",
+					"        \"id\": [1, 2, 3],\r\n",
+					"        \"name\": [\"taro\", \"hanako\", \"john\"],\r\n",
+					"    }\r\n",
+					")"
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"users"
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"purchases: pd.DataFrame = pd.DataFrame(\r\n",
+					"    {\r\n",
+					"        \"id\": [i for i in range(100)],\r\n",
+					"        \"user_id\": np.random.choice([1, 2, 3], 100),\r\n",
+					"        \"item_id\": np.random.choice([1, 2, 3], 100),\r\n",
+					"        \"quantity\": np.random.choice([i for i in range(1, 5)], 100)\r\n",
+					"    }\r\n",
+					")"
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"purchases"
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"items_spark: ps.sql.DataFrame = spark.createDataFrame(items)\r\n",
+					"users_spark: ps.sql.DataFrame = spark.createDataFrame(users)\r\n",
+					"purchases_spark: ps.sql.DataFrame = spark.createDataFrame(purchases)"
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Azure storage access info\r\n",
+					"abfs_account_name = 'demosynapse01' # replace with your storage account name\r\n",
+					"abfs_container_name = 'demo-fs-01' # replace with your container name\r\n",
+					"linked_service_name = 'demo-synapse-01-WorkspaceDefaultStorage'\r\n",
+					"\r\n",
+					"abfs_sas_token = mssparkutils.credentials.getConnectionStringOrCreds(linked_service_name)\r\n",
+					"\r\n",
+					"# Allow SPARK to access from DataLake Gen2  remotely\r\n",
+					"\r\n",
+					"uri = f\"abfss://{abfs_container_name}@{abfs_account_name}.dfs.core.windows.net\"\r\n",
+					""
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"items_spark.write.mode(\"overwrite\").parquet(f\"{uri}/parquet/items.parquet\")\r\n",
+					"users_spark.write.mode(\"overwrite\").parquet(f\"{uri}/parquet/users.parquet\")\r\n",
+					"purchases_spark.write.mode(\"overwrite\").parquet(f\"{uri}/parquet/purchases.parquet\")"
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
+				],
+				"attachments": null,
+				"execution_count": null
+			}
+		]
+	}
+}
