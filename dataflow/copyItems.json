@@ -1,5 +1,5 @@
 {
-	"name": "Dataflow1",
+	"name": "copyItems",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "AzureSynapseAnalyticsTable1",
+						"referenceName": "mart_items",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
