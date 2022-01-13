@@ -17,14 +17,11 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "5561cb21-0570-46d6-8942-6cbabbe23bdb"
+				"spark.autotune.trackingId": "4b885d86-7f36-47bb-a772-887fec2be066"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
-			"synapse_widget": {
-				"version": "0.1"
-			},
 			"enableDebugMode": false,
 			"kernelspec": {
 				"name": "synapse_pyspark",
@@ -46,8 +43,9 @@
 				"nodeCount": 10,
 				"cores": 8,
 				"memory": 56,
-				"extraHeader": null
-			}
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
@@ -57,8 +55,7 @@
 					"import numpy as np\r\n",
 					"import pyspark as ps"
 				],
-				"attachments": null,
-				"execution_count": 42
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -77,8 +74,7 @@
 					"# Enable Arrow-based columnar data transfers\r\n",
 					"spark.conf.set(\"spark.sql.execution.arrow.enabled\", \"true\")"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -102,8 +98,7 @@
 					"    }\r\n",
 					")"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -121,8 +116,7 @@
 				"source": [
 					"items"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -145,8 +139,7 @@
 					"    }\r\n",
 					")"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -164,8 +157,7 @@
 				"source": [
 					"users"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
@@ -190,8 +182,7 @@
 					"    }\r\n",
 					")"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -209,8 +200,7 @@
 				"source": [
 					"purchases"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -230,8 +220,7 @@
 					"users_spark: ps.sql.DataFrame = spark.createDataFrame(users)\r\n",
 					"purchases_spark: ps.sql.DataFrame = spark.createDataFrame(purchases)"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -259,8 +248,7 @@
 					"uri = f\"abfss://{abfs_container_name}@{abfs_account_name}.dfs.core.windows.net\"\r\n",
 					""
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -280,8 +268,27 @@
 					"users_spark.write.mode(\"overwrite\").parquet(f\"{uri}/parquet/users.parquet\")\r\n",
 					"purchases_spark.write.mode(\"overwrite\").parquet(f\"{uri}/parquet/purchases.parquet\")"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 11
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"items_spark.write.mode(\"overwrite\").csv(f\"{uri}/source/items.csv\")\r\n",
+					"users_spark.write.mode(\"overwrite\").csv(f\"{uri}/source/users.parquet\")\r\n",
+					"purchases_spark.write.mode(\"overwrite\").csv(f\"{uri}/source/purchases.parquet\")"
+				],
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -299,7 +306,6 @@
 				"source": [
 					""
 				],
-				"attachments": null,
 				"execution_count": null
 			}
 		]

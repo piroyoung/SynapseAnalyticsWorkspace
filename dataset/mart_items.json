@@ -1,0 +1,19 @@
+{
+	"name": "mart_items",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "demo-synapse-01-WorkspaceDefaultSqlServer",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "dwh"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "mart",
+			"table": "items"
+		}
+	}
+}
