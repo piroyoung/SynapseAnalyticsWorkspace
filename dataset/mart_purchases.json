@@ -13,7 +13,41 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlDWTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "user_id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "item_id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "quantity",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "item_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "item_price",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "user_name",
+				"type": "nvarchar"
+			}
+		],
 		"typeProperties": {
 			"schema": "mart",
 			"table": "purchases"
