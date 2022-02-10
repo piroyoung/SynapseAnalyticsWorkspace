@@ -1,5 +1,5 @@
 {
-	"name": "CopyPipeline_l5c",
+	"name": "itemsBlobToSQL",
 	"properties": {
 		"activities": [
 			{
