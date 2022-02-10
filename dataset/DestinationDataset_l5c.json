@@ -1,0 +1,16 @@
+{
+	"name": "DestinationDataset_l5c",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "mart",
+			"table": "items"
+		},
+		"sqlPool": {
+			"referenceName": "pool01",
+			"type": "SqlPoolReference"
+		}
+	}
+}
