@@ -48,7 +48,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "createMartPurchases",
+								"referenceName": "createMartPurchases_copy1",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -58,13 +58,7 @@
 									"sinkToMart": {}
 								}
 							},
-							"staging": {
-								"linkedService": {
-									"referenceName": "demo-synapse-01-WorkspaceDefaultStorage",
-									"type": "LinkedServiceReference"
-								},
-								"folderPath": "demo-fs-01/staging"
-							},
+							"staging": {},
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
@@ -81,8 +75,7 @@
 				"lastPublishTime": "2022-01-11T13:53:03Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/createMartPurchases')]",
-				"[concat(variables('workspaceId'), '/linkedServices/demo-synapse-01-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/dataflows/createMartPurchases_copy1')]"
 			]
 		},
 		{
@@ -405,6 +398,32 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/demo-synapse-01-WorkspaceDefaultSqlServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/mart_purchases_dump')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "demo-synapse-01-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "mart_purchases_dump",
+						"folderPath": "test",
+						"fileSystem": "demo-fs-01"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/demo-synapse-01-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -953,6 +972,132 @@
 				"[concat(variables('workspaceId'), '/datasets/items')]",
 				"[concat(variables('workspaceId'), '/datasets/users')]",
 				"[concat(variables('workspaceId'), '/datasets/mart_purchases')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/createMartPurchases_copy1')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "purchases",
+								"type": "DatasetReference"
+							},
+							"name": "purchases"
+						},
+						{
+							"dataset": {
+								"referenceName": "items",
+								"type": "DatasetReference"
+							},
+							"name": "items"
+						},
+						{
+							"dataset": {
+								"referenceName": "users",
+								"type": "DatasetReference"
+							},
+							"name": "users"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "mart_purchases_dump",
+								"type": "DatasetReference"
+							},
+							"name": "sinkToMart"
+						}
+					],
+					"transformations": [
+						{
+							"name": "joinWithItems"
+						},
+						{
+							"name": "purchasesWithItems"
+						},
+						{
+							"name": "purchasesWithItemsUsers"
+						},
+						{
+							"name": "purchaseTransactions"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id as long,",
+						"          user_id as long,",
+						"          item_id as long,",
+						"          quantity as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> purchases",
+						"source(output(",
+						"          id as long,",
+						"          name as string,",
+						"          price as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> items",
+						"source(output(",
+						"          id as long,",
+						"          name as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> users",
+						"purchases, items join(item_id == items@id,",
+						"     joinType:'left',",
+						"     broadcast: 'auto')~> joinWithItems",
+						"joinWithItems select(mapColumn(",
+						"          id = purchases@id,",
+						"          user_id,",
+						"          item_id,",
+						"          quantity,",
+						"          item_name = name,",
+						"          item_price = price",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> purchasesWithItems",
+						"purchasesWithItems, users join(user_id == users@id,",
+						"     joinType:'left',",
+						"     broadcast: 'auto')~> purchasesWithItemsUsers",
+						"purchasesWithItemsUsers select(mapColumn(",
+						"          id = purchasesWithItems@id,",
+						"          user_id,",
+						"          item_id,",
+						"          quantity,",
+						"          item_name,",
+						"          item_price,",
+						"          user_name = name",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> purchaseTransactions",
+						"purchaseTransactions sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sinkToMart"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/purchases')]",
+				"[concat(variables('workspaceId'), '/datasets/items')]",
+				"[concat(variables('workspaceId'), '/datasets/users')]",
+				"[concat(variables('workspaceId'), '/datasets/mart_purchases_dump')]"
 			]
 		},
 		{
@@ -1868,158 +2013,6 @@
 			},
 			"dependsOn": [],
 			"location": "japaneast"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/createMartPurchases_copy1')]",
-			"type": "Microsoft.Synapse/workspaces/dataflows",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "purchases",
-								"type": "DatasetReference"
-							},
-							"name": "purchases"
-						},
-						{
-							"dataset": {
-								"referenceName": "items",
-								"type": "DatasetReference"
-							},
-							"name": "items"
-						},
-						{
-							"dataset": {
-								"referenceName": "users",
-								"type": "DatasetReference"
-							},
-							"name": "users"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "mart_purchases_dump",
-								"type": "DatasetReference"
-							},
-							"name": "sinkToMart"
-						}
-					],
-					"transformations": [
-						{
-							"name": "joinWithItems"
-						},
-						{
-							"name": "purchasesWithItems"
-						},
-						{
-							"name": "purchasesWithItemsUsers"
-						},
-						{
-							"name": "purchaseTransactions"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          id as long,",
-						"          user_id as long,",
-						"          item_id as long,",
-						"          quantity as long",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'parquet') ~> purchases",
-						"source(output(",
-						"          id as long,",
-						"          name as string,",
-						"          price as long",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'parquet') ~> items",
-						"source(output(",
-						"          id as long,",
-						"          name as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'parquet') ~> users",
-						"purchases, items join(item_id == items@id,",
-						"     joinType:'left',",
-						"     broadcast: 'auto')~> joinWithItems",
-						"joinWithItems select(mapColumn(",
-						"          id = purchases@id,",
-						"          user_id,",
-						"          item_id,",
-						"          quantity,",
-						"          item_name = name,",
-						"          item_price = price",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> purchasesWithItems",
-						"purchasesWithItems, users join(user_id == users@id,",
-						"     joinType:'left',",
-						"     broadcast: 'auto')~> purchasesWithItemsUsers",
-						"purchasesWithItemsUsers select(mapColumn(",
-						"          id = purchasesWithItems@id,",
-						"          user_id,",
-						"          item_id,",
-						"          quantity,",
-						"          item_name,",
-						"          item_price,",
-						"          user_name = name",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> purchaseTransactions",
-						"purchaseTransactions sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'parquet',",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sinkToMart"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/purchases')]",
-				"[concat(variables('workspaceId'), '/datasets/items')]",
-				"[concat(variables('workspaceId'), '/datasets/users')]",
-				"[concat(variables('workspaceId'), '/datasets/mart_purchases_dump')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/mart_purchases_dump')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "demo-synapse-01-WorkspaceDefaultStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "mart_purchases_dump",
-						"folderPath": "test",
-						"fileSystem": "demo-fs-01"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/demo-synapse-01-WorkspaceDefaultStorage')]"
-			]
 		}
 	]
 }
