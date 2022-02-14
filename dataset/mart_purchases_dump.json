@@ -1,0 +1,21 @@
+{
+	"name": "mart_purchases_dump",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "demo-synapse-01-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "mart_purchases_dump",
+				"folderPath": "test",
+				"fileSystem": "demo-fs-01"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
