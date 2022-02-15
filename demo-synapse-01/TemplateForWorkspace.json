@@ -1196,12 +1196,12 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "-- SELECT\n--    TOP 100 *\n--FROM\n--    OPENROWSET(\n--        BULK 'https://demosynapse01.blob.core.windows.net/demo-fs-01/test/',\n--        FORMAT='PARQUET'\n--    ) AS [result]\n\n-- CREATE DATABASE mart; GO;\n\n-- CREATE EXTERNAL DATA SOURCE mart\n-- WITH ( LOCATION = 'https://demosynapse01.blob.core.windows.net/demo-fs-01/'); GO;\n\n\n\n",
+					"query": "-- SELECT\n--    TOP 100 *\n--FROM\n--    OPENROWSET(\n--        BULK 'https://demosynapse01.blob.core.windows.net/demo-fs-01/test/',\n--        FORMAT='PARQUET'\n--    ) AS [result]\n\n-- CREATE DATABASE dwh; GO;\n-- CREATE SCHEMA mart; GO;\n\n\n-- CREATE EXTERNAL DATA SOURCE mart\n-- WITH (\n--    LOCATION = 'https://demosynapse01.blob.core.windows.net/demo-fs-01/'\n--); GO;\n\n-- CREATE EXTERNAL FILE FORMAT parquet_snappy\n-- WITH (\n--    FORMAT_TYPE = PARQUET,\n--    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n-- ); GO;\n\ncreate external table purchases with (\n    location='dwh/purchases.parquet',\n    data_source=mart,\n    file_format=parquet_snappy\n) as (\n    SELECT\n        *\n    FROM\n        OPENROWSET(\n        BULK 'https://demosynapse01.blob.core.windows.net/demo-fs-01/test/',\n        FORMAT='PARQUET'\n    ) AS [result]    \n)\n",
 					"metadata": {
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "mart",
+						"databaseName": "dwh",
 						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
