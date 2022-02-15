@@ -1191,6 +1191,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/demoExternalTable')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- SELECT\n--    TOP 100 *\n--FROM\n--    OPENROWSET(\n--        BULK 'https://demosynapse01.blob.core.windows.net/demo-fs-01/test/',\n--        FORMAT='PARQUET'\n--    ) AS [result]\n\n-- CREATE DATABASE mart; GO;\n\n-- CREATE EXTERNAL DATA SOURCE mart\n-- WITH ( LOCATION = 'https://demosynapse01.blob.core.windows.net/demo-fs-01/'); GO;\n\n\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mart",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/generateDummies')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
