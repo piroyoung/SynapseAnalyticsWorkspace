@@ -2,12 +2,12 @@
 	"name": "demoExternalTable",
 	"properties": {
 		"content": {
-			"query": "",
+			"query": "-- SELECT\n--    TOP 100 *\n--FROM\n--    OPENROWSET(\n--        BULK 'https://demosynapse01.blob.core.windows.net/demo-fs-01/test/',\n--        FORMAT='PARQUET'\n--    ) AS [result]\n\n-- CREATE DATABASE mart; GO;\n\n-- CREATE EXTERNAL DATA SOURCE mart\n-- WITH ( LOCATION = 'https://demosynapse01.blob.core.windows.net/demo-fs-01/'); GO;\n\n\n\n",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "master",
+				"databaseName": "mart",
 				"poolName": "Built-in"
 			},
 			"resultLimit": 5000
