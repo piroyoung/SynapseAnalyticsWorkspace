@@ -165,7 +165,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "source"
+					"name": "00.source"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -255,7 +255,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "backup"
+					"name": "99.backup"
 				},
 				"annotations": [],
 				"type": "Parquet",
@@ -284,7 +284,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "datalake"
+					"name": "01.datalake"
 				},
 				"annotations": [],
 				"type": "Parquet",
@@ -325,7 +325,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "dwh"
+					"name": "02.dwh"
 				},
 				"annotations": [],
 				"type": "AzureSqlDWTable",
@@ -352,7 +352,7 @@
 					}
 				},
 				"folder": {
-					"name": "dwh"
+					"name": "02.dwh"
 				},
 				"annotations": [],
 				"type": "AzureSqlDWTable",
@@ -436,7 +436,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "datalake"
+					"name": "01.datalake"
 				},
 				"annotations": [],
 				"type": "Parquet",
@@ -481,7 +481,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "source"
+					"name": "00.source"
 				},
 				"annotations": [],
 				"type": "Parquet",
@@ -522,7 +522,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "source"
+					"name": "00.source"
 				},
 				"annotations": [],
 				"type": "Parquet",
@@ -567,7 +567,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "source"
+					"name": "00.source"
 				},
 				"annotations": [],
 				"type": "Parquet",
@@ -595,36 +595,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/test')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "demo-synapse-01-WorkspaceDefaultStorage",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "directory"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "test",
-						"fileSystem": "demo-fs-01"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/demo-synapse-01-WorkspaceDefaultStorage')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/users')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -634,7 +604,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "datalake"
+					"name": "01.datalake"
 				},
 				"annotations": [],
 				"type": "Parquet",
@@ -2021,6 +1991,31 @@
 				]
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/spark01')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 15
+				},
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 3,
+					"minNodeCount": 3
+				},
+				"nodeCount": 10,
+				"nodeSize": "Medium",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.1",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "japaneast"
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/pool01')]",
