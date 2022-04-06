@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "source"
+			"name": "00.source"
 		},
 		"annotations": [],
 		"type": "Parquet",

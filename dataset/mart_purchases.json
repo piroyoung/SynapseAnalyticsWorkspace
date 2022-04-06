@@ -9,7 +9,7 @@
 			}
 		},
 		"folder": {
-			"name": "dwh"
+			"name": "02.dwh"
 		},
 		"annotations": [],
 		"type": "AzureSqlDWTable",

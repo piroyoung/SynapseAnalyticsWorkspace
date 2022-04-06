@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "datalake"
+			"name": "01.datalake"
 		},
 		"annotations": [],
 		"type": "Parquet",
